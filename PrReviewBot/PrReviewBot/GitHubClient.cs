@@ -6,7 +6,7 @@ namespace PrReviewBot
 {
     public class GitHubClient
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient _httpClient;
         private readonly string _repo;
         private readonly string _prNumber;
 
@@ -19,10 +19,10 @@ namespace PrReviewBot
             if (string.IsNullOrEmpty(githubToken) || string.IsNullOrEmpty(_repo) || string.IsNullOrEmpty(_prNumber))
                 throw new Exception("Missing GitHub environment variables.");
 
-            _client = new HttpClient();
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
-            _client.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
-            _client.DefaultRequestHeaders.Add("User-Agent", "Claude-Bot");
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/vnd.github+json");
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", "Claude-Bot");
         }
 
         public async Task PostCommentAsync(string comment)
@@ -34,7 +34,7 @@ namespace PrReviewBot
 
             var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
 
-            var response = await _client.PostAsync(
+            var response = await _httpClient.PostAsync(
                 $"https://api.github.com/repos/{_repo}/issues/{_prNumber}/comments",
                 content
             );
