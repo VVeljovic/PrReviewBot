@@ -9,20 +9,19 @@ jobs:
   review:
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
       contents: read
+      pull-requests: write
+      issues: write
+
     steps:
-      # Checkout repozitorijuma i fetch cele istorije
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # ovo je ključno da origin/main postoji
+          fetch-depth: 0
 
-      # Setup .NET 8
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
 
-      # Pokretanje PR Review bota
       - run: dotnet run --project PrReviewBot/PrReviewBot/PrReviewBot.csproj
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
