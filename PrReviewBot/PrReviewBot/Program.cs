@@ -67,7 +67,7 @@ var response = await client.PostAsync("https://api.anthropic.com/v1/messages", n
 
 var json = await response.Content.ReadAsStringAsync();
 using var doc = JsonDocument.Parse(json);
-var reviewText = doc.RootElement.GetProperty("completion").GetString();
+var reviewText = doc.RootElement.GetProperty("content")[0].GetProperty("text").GetString() ?? "No response from claude";
 
 var gh = new GitHubClient();
-await gh.PostCommentAsync(reviewText ?? "No response from claude");
+await gh.PostCommentAsync(reviewText);
