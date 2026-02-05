@@ -18,7 +18,7 @@ string GetDiff()
     var psi = new ProcessStartInfo
     {
         FileName = "git",
-        Arguments = "diff origin/main...HEAD",
+        Arguments = "diff origin/main...HEAD --",
         RedirectStandardOutput = true,
         UseShellExecute = false
     };
