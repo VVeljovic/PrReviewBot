@@ -10,7 +10,7 @@ var apiKey = Environment.GetEnvironmentVariable("ANTHROPIC_API_KEY");
 
 if (string.IsNullOrEmpty(apiKey))
 {
-    Console.Write("Missing key");
+    Console.Write("key not found");
     return;
 }
 string GetDiff()
@@ -18,7 +18,7 @@ string GetDiff()
     var psi = new ProcessStartInfo
     {
         FileName = "git",
-        Arguments = "diff origin/main...HEAD",
+        Arguments = "diff origin/main...HEAD --",
         RedirectStandardOutput = true,
         UseShellExecute = false
     };
@@ -41,8 +41,6 @@ Provide your review in clear, concise language suitable to post as a GitHub PR c
 
 Here is the diff:
 {diff}";
-
-
 
 var client = new HttpClient();
 client.DefaultRequestHeaders.Add("x-api-key", apiKey);
