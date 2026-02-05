@@ -1,4 +1,6 @@
 ﻿using DotNetEnv;
+using PrReviewBot;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -11,6 +13,36 @@ if (string.IsNullOrEmpty(apiKey))
     Console.Write("Missing key");
     return;
 }
+string GetDiff()
+{
+    var psi = new ProcessStartInfo
+    {
+        FileName = "git",
+        Arguments = "diff origin/main...HEAD",
+        RedirectStandardOutput = true,
+        UseShellExecute = false
+    };
+
+    using var p = Process.Start(psi)!;
+    return p.StandardOutput.ReadToEnd();
+}
+
+var diff = GetDiff();
+var prompt = diff.Length == 0
+    ? "The PR has no changes. Provide a brief confirmation message."
+    : $@"
+You are an expert code reviewer. Analyze the following git diff and provide:
+1. A summary of what changed.
+2. Any potential bugs or issues.
+3. Suggestions for improving code quality.
+4. Recommendations for tests or documentation updates.
+
+Provide your review in clear, concise language suitable to post as a GitHub PR comment.
+
+Here is the diff:
+{diff}";
+
+
 
 var client = new HttpClient();
 client.DefaultRequestHeaders.Add("x-api-key", apiKey);
@@ -24,7 +56,7 @@ var payload = new
     {
         new
         {
-            content = "Let mi know how to integrate bitbucket PR pipeline with CLAUDE.",
+            content = prompt,
             role = "user"
         }
     },
@@ -34,4 +66,8 @@ var payload = new
 var response = await client.PostAsync("https://api.anthropic.com/v1/messages", new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json"));
 
 var json = await response.Content.ReadAsStringAsync();
-Console.WriteLine(json);
+using var doc = JsonDocument.Parse(json);
+var reviewText = doc.RootElement.GetProperty("completion").GetString();
+
+var gh = new GitHubClient();
+await gh.PostCommentAsync(reviewText);
