@@ -33,6 +33,5 @@ var payload = new
 
 var response = await client.PostAsync("https://api.anthropic.com/v1/messages", new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json"));
 
-
 var json = await response.Content.ReadAsStringAsync();
 Console.WriteLine(json);
