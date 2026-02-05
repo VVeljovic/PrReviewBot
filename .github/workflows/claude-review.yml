@@ -18,7 +18,7 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - run: dotnet run --project PrReviewBot
+      - run: dotnet run --project PrReviewBot/PrReviewBot/PrReviewBot.csproj
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
