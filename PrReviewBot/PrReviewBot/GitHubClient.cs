@@ -42,7 +42,7 @@ namespace PrReviewBot
             if (!response.IsSuccessStatusCode)
                 Console.WriteLine($"Failed to post comment: {response.StatusCode}");
             else
-                Console.WriteLine("Comment posted ✅");
+                Console.WriteLine("Comment posted ");
         }
     }
 }

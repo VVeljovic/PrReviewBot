@@ -70,4 +70,4 @@ using var doc = JsonDocument.Parse(json);
 var reviewText = doc.RootElement.GetProperty("completion").GetString();
 
 var gh = new GitHubClient();
-await gh.PostCommentAsync(reviewText);
+await gh.PostCommentAsync(reviewText ?? "No response from claude");
