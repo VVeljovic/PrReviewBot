@@ -1,4 +1,5 @@
 ﻿using DotNetEnv;
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -11,6 +12,24 @@ if (string.IsNullOrEmpty(apiKey))
     Console.Write("Missing key");
     return;
 }
+string GetDiff()
+{
+    var psi = new ProcessStartInfo
+    {
+        FileName = "git",
+        Arguments = "diff origin/main...HEAD",
+        RedirectStandardOutput = true,
+        UseShellExecute = false
+    };
+
+    using var p = Process.Start(psi)!;
+    return p.StandardOutput.ReadToEnd();
+}
+
+var diff = GetDiff();
+Console.WriteLine(diff.Length == 0 ? "No diff" : diff);
+
+
 
 var client = new HttpClient();
 client.DefaultRequestHeaders.Add("x-api-key", apiKey);
